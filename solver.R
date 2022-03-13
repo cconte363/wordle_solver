@@ -19,6 +19,7 @@ five_letters = lowercase[which(nchar(lowercase)==5)]
 deduped = unique(five_letters)
 word_df = data.frame(word = deduped)
 #assuming all words have equal probability of being chosen
+#a separate analysis could be done to determine if there were a relationship between the popularity of a word and it's chance of being chosen.
 rm(list=setdiff(ls(), c('word_df', 'load')))
 #create a data frame counting the number of words in which a letter appears. 
 #I'm going to count repeated occurrences of a letter as a separate letter to be guessed. 
@@ -70,13 +71,15 @@ update_guess = function(word, #word guessed
   yellow_positions = which(colors == 'yellow')
   yellow_letters = letters[yellow_positions]
   #require yellow letters
-  for (letter in yellow_letters)
+  for (i in 1:length(yellow_letters))
   {
-    words_table = words_table %>% filter(grepl(letter, word))
+    #require yellow letter
+    words_table = words_table %>% filter(grepl(yellow_letters[i], word))
+    #remove yellow letters in incorrect positions
+    pattern = create_regex_pattern(yellow_letters[i], yellow_positions[i])
+    words_table = words_table %>% filter(!grepl(paste0(pattern, collapse = ''), word))
+    
   }
-  #remove words containing yellow letters in incorrect positions
-  pattern = create_regex_pattern(yellow_letters, yellow_positions)
-  words_table = words_table %>% filter(!grepl(paste0(pattern, collapse = ''), word))
   #update gray tiles
   gray_letters = letters[which(colors == 'gray')]
   for (letter in gray_letters)
@@ -91,9 +94,11 @@ regression_test = FALSE
 if (regression_test)
 {
   test_1 = calculate_scores(word_df)
-  test_2 = update_guess('arose', c('yellow', 'gray', 'yellow', 'gray', 'gray'), words_table = test_1)
-  test_3 = update_guess('talon', c('green', 'yellow', 'gray', 'yellow', 'gray'), words_table = test_2)
+  test_2 = update_guess('arose', c('gray', 'gray', 'yellow', 'gray', 'gray'), words_table = test_1)
+  test_3 = update_guess('pilot', c('gray', 'gray', 'gray', 'yellow', 'yellow'), words_table = test_2)
+  
   rm(list = setdiff(ls(),
                     c('calculate_scores', 'create_regex_pattern', 'load', 'update_guess', 'letter_df', 'word_df')))
 }
+
 
