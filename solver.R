@@ -43,8 +43,7 @@ calculate_scores = function(words_table = word_df) {
   }
   words_table$ranked_score = rank(words_table$score, ties.method = "min")
   words_table$normalized_score = (words_table$ranked_score - mean(words_table$ranked_score))/sd(words_table$ranked_score)
-  cat('Reccommends guessing', 
-            words_table$word[which(words_table$score==max(words_table$score))])
+  cat('Reccommends guessing', words_table$word[which(words_table$score==max(words_table$score))])
   return(words_table)
 }
 
@@ -95,9 +94,7 @@ if (regression_test)
   test_1 = calculate_scores(word_df)
   test_2 = update_guess('arose', c('gray', 'gray', 'yellow', 'gray', 'gray'), words_table = test_1)
   test_3 = update_guess('pilot', c('gray', 'gray', 'gray', 'yellow', 'yellow'), words_table = test_2)
-  
-  rm(list = setdiff(ls(),
-                    c('calculate_scores', 'create_regex_pattern', 'load', 'update_guess', 'letter_df', 'word_df')))
+  rm(list = setdiff(ls(), c('calculate_scores', 'create_regex_pattern', 'load', 'update_guess', 'letter_df', 'word_df')))
 }
 
 
