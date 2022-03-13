@@ -69,10 +69,9 @@ update_guess = function(word, #word guessed
   #update yellow tiles
   yellow_positions = which(colors == 'yellow')
   yellow_letters = letters[yellow_positions]
-  #require yellow letters
   for (i in 1:length(yellow_letters))
   {
-    #require yellow letter
+    #require yellow letters
     words_table = words_table %>% filter(grepl(yellow_letters[i], word))
     #remove yellow letters in incorrect positions
     pattern = create_regex_pattern(yellow_letters[i], yellow_positions[i])
