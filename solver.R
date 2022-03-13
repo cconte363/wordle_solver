@@ -78,7 +78,6 @@ update_guess = function(word, #word guessed
     #remove yellow letters in incorrect positions
     pattern = create_regex_pattern(yellow_letters[i], yellow_positions[i])
     words_table = words_table %>% filter(!grepl(paste0(pattern, collapse = ''), word))
-    
   }
   #update gray tiles
   gray_letters = letters[which(colors == 'gray')]
