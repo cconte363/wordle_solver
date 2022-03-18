@@ -12,7 +12,7 @@ all_words = scan(text = shakespeare, what ='')
 #remove punctuation & numbers
 only_letters = gsub('[[:punct:]|[:digit:]|[:space:]|"]', '', all_words)
 #subset 5 letter words
-five_letters = lowercase[which(nchar(only_letters)==5)]
+five_letters = only_letters[which(nchar(only_letters)==5)]
 #dedupe
 deduped = unique(five_letters)
 word_df = data.frame(word = deduped)
