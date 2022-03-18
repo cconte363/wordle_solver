@@ -34,7 +34,7 @@ letter_df$regex_pattern = sapply(letter_df$letter, FUN = function(x) {
                                                                      
 calculate_scores = function(words_table = word_df) {
   letter_df$words_containing = sapply(letter_df$regex_pattern, function(x) {sum(grepl(x, words_table$word))})
-  words_table$score = 0
+  words_table$score = rep(0, nrow(words_table))2
   for (i in 1:nrow(letter_df))
   {
     pattern = letter_df$regex_pattern[i]
