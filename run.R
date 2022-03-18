@@ -7,14 +7,12 @@ load = function(package) {
 }
 
 load('readr')
-shakespeare = read_file("https://www.gutenberg.org/files/100/100-0.txt")
+shakespeare = read_file("http://www.mieliestronk.com/corncob_lowercase.txt")
 all_words = scan(text = shakespeare, what ='')
 #remove punctuation & numbers
-only_letters = gsub('[[:punct:]|[:digit:]|[:space:]|’|‘|—|”|“]', '', all_words)
-#lowercase
-lowercase = tolower(only_letters)
+only_letters = gsub('[[:punct:]|[:digit:]|[:space:]|"]', '', all_words)
 #subset 5 letter words
-five_letters = lowercase[which(nchar(lowercase)==5)]
+five_letters = lowercase[which(nchar(only_letters)==5)]
 #dedupe
 deduped = unique(five_letters)
 word_df = data.frame(word = deduped)
@@ -34,7 +32,7 @@ letter_df$regex_pattern = sapply(letter_df$letter, FUN = function(x) {
                                                                      
 calculate_scores = function(words_table = word_df) {
   letter_df$words_containing = sapply(letter_df$regex_pattern, function(x) {sum(grepl(x, words_table$word))})
-  words_table$score = rep(0, nrow(words_table))2
+  words_table$score = rep(0, nrow(words_table))
   for (i in 1:nrow(letter_df))
   {
     pattern = letter_df$regex_pattern[i]
