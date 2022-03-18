@@ -7,8 +7,8 @@ load = function(package) {
 }
 
 load('readr')
-shakespeare = read_file("http://www.mieliestronk.com/corncob_lowercase.txt")
-all_words = scan(text = shakespeare, what ='')
+corncob = read_file("http://www.mieliestronk.com/corncob_lowercase.txt")
+all_words = scan(text = corncob, what ='')
 #remove punctuation & numbers
 only_letters = gsub('[[:punct:]|[:digit:]|[:space:]|"]', '', all_words)
 #subset 5 letter words
