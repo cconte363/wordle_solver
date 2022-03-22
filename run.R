@@ -22,14 +22,14 @@ rm(list=setdiff(ls(), c('word_df', 'load')))
 #create a data frame counting the number of words in which a letter appears. 
 #I'm going to count repeated occurrences of a letter as a separate letter to be guessed. 
 #For example, a second e could be more likely than the letter z.
-letter_df = data.frame(letter = c(letters, paste(paste(letters, '2', sep = '')), paste(paste(letters, '3', sep = ''))))
+letter_df = data.frame(letter = c(paste(letters, '1', sep = ''), paste(letters, '2', sep = ''), paste(letters, '3', sep = '')))
 letter_df$regex_pattern = sapply(letter_df$letter, FUN = function(x) {
   ifelse(grepl('2', x), 
          paste0(gsub('2', '', x), '.*', gsub('2', '', x)),
          ifelse(grepl('3', x), 
                 paste0(gsub('3', '', x), '.*',gsub('3', '', x), '.*',gsub('3', '', x)),
-                x))})
-                                                                     
+                gsub('1', '', x)))})
+
 calculate_scores = function(words_table = word_df) {
   letter_df$words_containing = sapply(letter_df$regex_pattern, function(x) {sum(grepl(x, words_table$word))})
   words_table$score = rep(0, nrow(words_table))
@@ -62,18 +62,25 @@ update_guess = function(word, #word guessed
                         words_table = word_df) {
   letters = strsplit(word, '')[[1]]
   #update green tiles
-  pattern = create_regex_pattern(letters[which(colors == 'green')], which(colors == 'green'))
+  green_letters = letters[which(colors == 'green')]
+  pattern = create_regex_pattern(green_letters, which(colors == 'green'))
   words_table = words_table %>% filter(grepl(paste0(pattern, collapse = ''), word))
   #update yellow tiles
   yellow_positions = which(colors == 'yellow')
-  yellow_letters = letters[yellow_positions]
-  for (i in 1:length(yellow_letters))
+  yellow_letters = letters[which(colors == 'yellow')]
+  if (length(yellow_letters) > 0)
   {
-    #require yellow letters
-    words_table = words_table %>% filter(grepl(yellow_letters[i], word))
-    #remove yellow letters in incorrect positions
-    pattern = create_regex_pattern(yellow_letters[i], yellow_positions[i])
-    words_table = words_table %>% filter(!grepl(paste0(pattern, collapse = ''), word))
+    for (i in 1:length(yellow_positions))
+    {
+      #require yellow letters
+      #count occurrences of a letter among colored tiles
+      occurences = sum(c(green_letters, yellow_letters) == yellow_letters[i]) 
+      pattern = subset(letter_df, letter == paste0(yellow_letters[i], occurences))$regex_pattern
+      words_table = words_table %>% filter(grepl(pattern, word))
+      #remove yellow letters in incorrect positions
+      pattern = create_regex_pattern(yellow_letters[i], yellow_positions[i])
+      words_table = words_table %>% filter(!grepl(paste0(pattern, collapse = ''), word))
+    } 
   }
   #update gray tiles
   gray_letters = letters[which(colors == 'gray')]
@@ -93,5 +100,3 @@ if (regression_test)
   test_3 = update_guess('pilot', c('gray', 'gray', 'gray', 'yellow', 'yellow'), words_table = test_2)
   rm(list = setdiff(ls(), c('calculate_scores', 'create_regex_pattern', 'load', 'update_guess', 'letter_df', 'word_df')))
 }
-
-
