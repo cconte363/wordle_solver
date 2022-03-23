@@ -84,7 +84,7 @@ update_guess = function(word, #word guessed
   }
   #update gray tiles
   gray_letters = letters[which(colors == 'gray')]
-  for (letter in gray_letters)
+  for (letter in setdiff(gray_letters, c(green_letters, yellow_letters)))
   {
     words_table = words_table %>% filter(!grepl(letter, word))
   }
