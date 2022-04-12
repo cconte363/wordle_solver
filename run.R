@@ -7,15 +7,8 @@ load = function(package) {
 }
 
 load('readr')
-corncob = read_file("http://www.mieliestronk.com/corncob_lowercase.txt")
-all_words = scan(text = corncob, what ='')
-#remove punctuation & numbers
-only_letters = gsub('[[:punct:]|[:digit:]|[:space:]|"]', '', all_words)
-#subset 5 letter words
-five_letters = only_letters[which(nchar(only_letters)==5)]
-#dedupe
-deduped = unique(five_letters)
-word_df = data.frame(word = deduped)
+nytimes = read_file("https://static.nytimes.com/newsgraphics/2022/01/25/wordle-solver/assets/solutions.txt")
+word_df = data.frame(word = scan(text = nytimes, what =''))
 #assuming all words have equal probability of being chosen
 #a separate analysis could be done to determine if there were a relationship between the popularity of a word and it's chance of being chosen.
 rm(list=setdiff(ls(), c('word_df', 'load')))
